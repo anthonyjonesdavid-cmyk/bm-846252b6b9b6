@@ -348,20 +348,45 @@ body.reading .search{flex:1 1 auto;max-width:360px;min-width:44px}
 @media (max-width:359px){.hdr .prog{display:none}.pfoot button{width:34px;height:34px}#pnum{min-width:0}.ordertog button{padding:0 9px;font-size:13px}.ordertog button svg{display:none}}
 .ordertog button.spin svg{animation:spin .5s ease}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== one-row header: logo · search icon · Filters · page count · Latest/Shuffle (search expands as an overlay) ===== */
+.hdr .search{display:none}
+body.searching .hdr .search,body.searching.reading .hdr .search{display:flex;align-items:center;gap:8px;position:absolute;inset:0;max-width:none;padding:0 max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left));background:#111;z-index:3;margin:0}
+body.searching .hdr .search input{flex:1;padding-right:40px}
+body.searching .hdr .search>svg{left:calc(max(10px,env(safe-area-inset-left)) + 12px);top:16px}
+.search .clr{right:auto;top:auto;position:relative;margin-left:-44px;width:32px;height:32px;flex:none}
+.sdone{flex:none;height:40px;min-width:64px;border:0;border-radius:20px;background:#2a2a2a;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.hdr .sbtn{width:40px;padding:0;position:relative}.hdr .sbtn .dot{position:absolute;top:6px;right:6px}.hdr .sbtn.on .dot{display:block}
+.hdr .pfoot{flex:1 1 auto;justify-content:center;min-width:0}
+body:not(.reading) .hdr .sbtn,body:not(.reading) #openFilters{margin-left:auto}
+body:not(.reading) #openFilters{margin-left:0}
+body.reading .hdr .rright{margin-left:0}
+#pnum{font-size:13px;color:#bbb;min-width:0}
+body.reading{--hdr:48px!important}
+body.reading .hdr{flex-wrap:nowrap!important;row-gap:0}
+body.reading .hdr::after{display:none}
+body.reading .hdr .pfoot{order:0!important;flex:1 1 auto!important;justify-content:center!important}
+body.reading .rright{order:0!important}
+.ordertog .oico{display:none}
+#q::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+@media (max-width:699px){.hdr{gap:6px}.ordertog .olbl{display:none}.ordertog .oico,.ordertog button svg{display:block!important}.ordertog button{width:44px;padding:0!important;justify-content:center}.hbtn .lbl{display:none}#openFilters{width:40px;padding:0}.logo{padding:4px 2px}}
+@media (min-width:700px){body.reading .hdr .rright .cnt{display:none}}
 </style>
 </head>
 <body>
 <div id="topBand" aria-hidden="true"></div>
 <header class="hdr">
   <button class="logo" id="goHome" aria-label="Home"><i>B</i><b>Bookmarks</b></button>
-  <div class="pfoot" id="pnav"><button id="prev" aria-label="Previous page">◀</button><div class="prog"><i id="progbar"></i></div><span id="pnum"></span><button id="next" aria-label="Next page">▶</button></div>
-  <div class="search">
+  <button class="hbtn sbtn" id="openSearch" aria-label="Search"><span class="dot"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+  <div class="search" id="searchBox">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
     <input id="q" type="search" placeholder="Search posts, people, links" autocomplete="off" enterkeyhint="search">
     <button class="clr" id="qclr" aria-label="Clear search">✕</button>
+    <button class="sdone" id="closeSearch" aria-label="Close search">Done</button>
   </div>
-  <div class="rright"><span class="cnt" id="rcount"></span><div class="ordertog" id="ordertog" role="group" aria-label="Order"><button data-ord="saved" aria-label="Latest saved first">Latest</button><button data-ord="shuffle" aria-label="Shuffle (tap again to reshuffle)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Shuffle</button></div></div>
   <button class="hbtn" id="openFilters" aria-label="Filters"><span class="dot"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span class="lbl">Filters</span></button>
+  <div class="pfoot" id="pnav"><span id="pnum"></span></div>
+  <div class="rright"><span class="cnt" id="rcount"></span><div class="ordertog" id="ordertog" role="group" aria-label="Order"><button data-ord="saved" aria-label="Latest saved first"><svg class="oico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span class="olbl">Latest</span></button><button data-ord="shuffle" aria-label="Shuffle (tap again to reshuffle)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span class="olbl">Shuffle</span></button></div></div>
 </header>
 
 <main id="home"></main>
@@ -626,8 +651,6 @@ function preloadAround(idx){ [1,-1,2,-2].forEach(d => preload(idx + d)); }
 window.__imgReady = idx => Promise.all(pageSrcs(idx).map(s => warm(s).ready));
 function updateFoot(){
   $('#pnum').textContent = `${cur+1} / ${pages.length}`;
-  $('#progbar').style.width = (pages.length>1 ? cur/(pages.length-1)*100 : 100) + '%';
-  $('#prev').disabled = cur===0; $('#next').disabled = cur>=pages.length-1;
 }
 function showPage(idx){
   idx = Math.max(0, Math.min(pages.length-1, idx));
@@ -755,7 +778,7 @@ function openReader(keepItem){
 }
 function goHome(){
   Object.assign(state,{q:'',tag:'',author:'',folder:'',from:'',to:'',sort:getOrderPref(),media:''});
-  $('#q').value=''; $('#qclr').style.display='none'; syncSheet();
+  $('#q').value=''; $('#qclr').style.display='none'; syncSearchDot(); syncSheet();
   $('#reader').style.display='none'; $('#home').style.display='block'; document.body.classList.remove('reading'); syncSearchPh(); renderChips();
   document.title = 'Bookmarks Magazine'; scrollTo(0,0);
 }
@@ -841,7 +864,7 @@ document.addEventListener('click', e => {
   const op = t.closest('[data-open]');
   if(op && !moved){ openDetail(op.dataset.open); return; }
   const chip = t.closest('.chip');
-  if(chip){ const k = chip.dataset.k; if(k==='date'){state.from='';state.to='';} else if(k==='sort') state.sort=getOrderPref(); else { state[k]=''; if(k==='q'){$('#q').value='';$('#qclr').style.display='none';} } openReader(); }
+  if(chip){ const k = chip.dataset.k; if(k==='date'){state.from='';state.to='';} else if(k==='sort') state.sort=getOrderPref(); else { state[k]=''; if(k==='q'){$('#q').value='';$('#qclr').style.display='none';syncSearchDot();} } openReader(); }
 });
 $('#goHome').onclick = goHome;
 $('#openFilters').onclick = openSheet; $('#scrim').onclick = closeSheet;
@@ -851,14 +874,17 @@ document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e
 $('#dclose').onclick = closeDetail;
 $('#ordertog').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
   if(b.dataset.ord==='shuffle'){ b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin'); } setOrder(b.dataset.ord); });
-$('#prev').onclick = () => go(-1); $('#next').onclick = () => go(1);
+function openSearch(){ document.body.classList.add('searching'); setTimeout(()=>$('#q').focus(), 30); }
+function closeSearch(){ document.body.classList.remove('searching'); $('#q').blur(); syncSearchDot(); }
+function syncSearchDot(){ $('#openSearch').classList.toggle('on', !!$('#q').value.trim()); }
+$('#openSearch').onclick = openSearch; $('#closeSearch').onclick = closeSearch;
 let qt;
 $('#q').addEventListener('input', e => {
   $('#qclr').style.display = e.target.value ? 'block' : 'none';
   clearTimeout(qt); qt = setTimeout(()=>{ state.q = e.target.value.trim(); if(state.q && state.tileTag){ state.tag=''; state.tileTag=false; } if(state.q || $('#reader').style.display==='flex') openReader(); }, 220);
 });
-$('#q').addEventListener('keydown', e => { if(e.key==='Enter'){ e.target.blur(); } });
-$('#qclr').onclick = () => { $('#q').value=''; $('#qclr').style.display='none'; state.q=''; openReader(); };
+$('#q').addEventListener('keydown', e => { if(e.key==='Enter'){ e.target.blur(); closeSearch(); } if(e.key==='Escape'){ e.stopPropagation(); closeSearch(); } });
+$('#qclr').onclick = () => { $('#q').value=''; $('#qclr').style.display='none'; state.q=''; syncSearchDot(); openReader(); $('#q').focus(); };
 document.addEventListener('keydown', e => {
   if(e.target.matches('input,select')) return;
   if(e.key==='Escape'){ if($('#lbox').style.display==='flex') closeLightbox(); else if($('#detail').style.display==='flex') closeDetail(); else if($('#sheet').classList.contains('open')) closeSheet(); else goHome(); return; }
@@ -866,7 +892,7 @@ document.addEventListener('keydown', e => {
   if(['ArrowRight','PageDown','l'].includes(e.key)){ e.preventDefault(); go(1); }
   if(['ArrowLeft','PageUp','h'].includes(e.key)){ e.preventDefault(); go(-1); }
   if(e.key==='Home' && !flip){ showPage(0); } if(e.key==='End' && !flip){ showPage(pages.length-1); }
-  if(e.key==='/'){ e.preventDefault(); $('#q').focus(); }
+  if(e.key==='/'){ e.preventDefault(); openSearch(); }
 });
 // drag-to-turn: horizontal on iPad/desktop, vertical on phones (swipe up = next, down = previous). The fold edge tracks
 // the finger 1:1 once it moves ~8px along the turn axis. On release it commits if the finger travelled >= swipeDist
