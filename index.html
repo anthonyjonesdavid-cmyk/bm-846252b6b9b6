@@ -45,7 +45,9 @@ if (navigator.standalone === true || matchMedia('(display-mode: standalone)').ma
 --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 /* band = the real safe-area inset (exact when iPadOS draws content under the status bar); 24px fallback only when
    the web view covers the status bar but reports no inset (html.sbfull, set by the script above) */
-html.standalone{--top:env(safe-area-inset-top,0px)}
+/* iPhone insets (47-62pt) include empty space below the clock/battery (they end ~14pt above the inset edge), so the
+   header tucks up under the icons: reserve inset-14px, but never less than min(inset,24px) (iPad's 24pt bar is all icons) */
+html.standalone{--top:max(calc(env(safe-area-inset-top,0px) - 14px),min(env(safe-area-inset-top,0px),24px))}
 html.standalone.sbfull{--top:max(env(safe-area-inset-top,0px),24px)}
 /* fully opaque band (same #111 as the header) over the status-bar area, above everything, so the white clock/battery stay readable */
 #topBand{position:fixed;left:0;right:0;top:0;height:var(--top);background:#111;z-index:2147483000;pointer-events:none}
